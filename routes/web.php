@@ -4,6 +4,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 
 Route::get('/', function () {
     $products = Product::where('status', 'Available')
@@ -19,3 +20,5 @@ Route::get('/admin', function () {
 Route::resource('products', ProductController::class);
 
 Route::resource('categories', CategoryController::class);
+
+Route::resource('customers', CustomerController::class);
