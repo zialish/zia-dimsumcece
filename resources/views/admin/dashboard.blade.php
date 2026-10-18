@@ -417,7 +417,7 @@
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false"
                         id="navigation">
                         <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
+                           <a href="#" class="nav-link" style="color: #c2c7d0;">
                                 <i class="nav-icon bi bi-speedometer"></i>
                                 <p>
                                     Dashboard
