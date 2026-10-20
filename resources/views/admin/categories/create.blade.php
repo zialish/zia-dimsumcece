@@ -1,5 +1,5 @@
 
-@extends('layouts.admin')
+@extends('layouts.admin.app')
 
 @section('title', 'Tambah Kategori')
 
