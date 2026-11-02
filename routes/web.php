@@ -37,3 +37,7 @@ Route::post('/register', [AuthController::class, 'register'])
     return redirect('/');
 });
 
+Route::get('/home', function () {
+    return view('guest.home-welcome');
+})->name('home');
+
