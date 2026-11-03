@@ -68,6 +68,11 @@
                         <a class="nav-link" href="#keranjang">Keranjang</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#ulasan-pelanggan">
+                            Ulasan
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="btn btn-warning px-4" href="#login">Login</a>
                     </li>
                 </ul>
@@ -311,42 +316,7 @@
 
                         <div class="row g-4" id="menu">
                             @forelse ($products as $product)
-                                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                                    <div class="card h-100 rounded-4 border shadow-sm overflow-hidden">
-                                        @if ($product->image)
-                                            <div class="p-3">
-                                                <img src="{{ asset('storage/' . $product->image) }}"
-                                                    alt="{{ $product->product_name }}"
-                                                    class="img-fluid rounded-3 w-100"
-                                                    style="height: 180px; object-fit: contain;">
-                                            </div>
-                                        @else
-                                            <div class="d-flex align-items-center justify-content-center bg-light m-3 rounded-3"
-                                                style="height: 180px;">
-                                                <span class="text-secondary">Belum ada foto</span>
-                                            </div>
-                                        @endif
-
-                                        <div class="card-body d-flex flex-column p-3 pt-0">
-                                            <h5 class="fw-bold mb-2">{{ $product->product_name }}</h5>
-
-                                            <p class="text-secondary mb-3">
-                                                {{ $product->description ?? 'Dimsum lezat Dimsum Cece' }}
-                                            </p>
-
-                                            <h5 class="fw-bold text-danger mt-auto mb-3">
-                                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                                            </h5>
-
-                                            <div>
-                                                <span
-                                                    class="badge rounded-pill {{ $product->stock > 0 ? 'bg-success' : 'bg-secondary' }} px-3 py-2">
-                                                    {{ $product->stock > 0 ? 'Tersedia' : 'Stok Habis' }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('guest.partials.product-card', ['product' => $product])
                             @empty
                                 <div class="col-12 text-center py-5">
                                     <p class="text-secondary">Belum ada produk yang tersedia.</p>
@@ -1263,6 +1233,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&amp;display=swap"
         rel="stylesheet">
+
+    @include('guest.partials.review-list', ['reviews' => $reviews])
 </body>
 
 </html>
