@@ -41,6 +41,7 @@
                             <th>No.</th>
                             <th>Foto</th>
                             <th>Nama Produk</th>
+                            <th>Kategori</th>
                             <th>Deskripsi</th>
                             <th>Harga</th>
                             <th>Stok</th>
@@ -62,6 +63,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $product->product_name }}</td>
+                                <td>{{ $product->category_name ?? '-' }}</td>
                                 <td>{{ $product->description ?? '-' }}</td>
                                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                                 <td>{{ $product->stock }}</td>
@@ -89,7 +91,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-secondary">
+                                <td colspan="9" class="text-center text-secondary">
                                     Belum ada data produk.
                                 </td>
                             </tr>
