@@ -1,28 +1,44 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = DB::table('products')
+            ->leftJoin(
+                'categories',
+                'products.category_id',
+                '=',
+                'categories.category_id'
+            )
+            ->select('products.*', 'categories.category_name')
+            ->orderBy('products.product_id', 'desc')
+            ->get();
 
         return view('admin.products.index', compact('products'));
     }
 
     public function create()
     {
-        return view('admin.products.create');
+        $categories = DB::table('categories')
+            ->where('status', 'Active')
+            ->orderBy('category_name')
+            ->get();
+
+        return view('admin.products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'product_name' => 'required',
-            'description'  => 'nullable',
+            'product_name' => 'required|string|max:255',
+            'description'  => 'nullable|string',
+            'category_id'  => 'required|exists:categories,category_id',
             'price'        => 'required|numeric|min:0',
             'stock'        => 'required|integer|min:0',
             'status'       => 'required|in:Available,Unavailable',
@@ -32,6 +48,7 @@ class ProductController extends Controller
         $data = $request->only([
             'product_name',
             'description',
+            'category_id',
             'price',
             'stock',
             'status',
@@ -42,7 +59,10 @@ class ProductController extends Controller
                 ->store('products', 'public');
         }
 
-        Product::create($data);
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        DB::table('products')->insert($data);
 
         return redirect()->route('products.index')
             ->with('success', 'Produk berhasil ditambahkan!');
@@ -50,27 +70,42 @@ class ProductController extends Controller
 
     public function edit(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = DB::table('products')
+            ->where('product_id', $id)
+            ->first();
 
-        return view('admin.products.edit', compact('product'));
+        abort_if(!$product, 404);
+
+        $categories = DB::table('categories')
+            ->where('status', 'Active')
+            ->orderBy('category_name')
+            ->get();
+
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'product_name' => 'required',
-            'description'  => 'nullable',
+            'product_name' => 'required|string|max:255',
+            'description'  => 'nullable|string',
+            'category_id'  => 'required|exists:categories,category_id',
             'price'        => 'required|numeric|min:0',
             'stock'        => 'required|integer|min:0',
             'status'       => 'required|in:Available,Unavailable',
             'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $product = Product::findOrFail($id);
+        $product = DB::table('products')
+            ->where('product_id', $id)
+            ->first();
+
+        abort_if(!$product, 404);
 
         $data = $request->only([
             'product_name',
             'description',
+            'category_id',
             'price',
             'stock',
             'status',
@@ -81,7 +116,11 @@ class ProductController extends Controller
                 ->store('products', 'public');
         }
 
-        $product->update($data);
+        $data['updated_at'] = now();
+
+        DB::table('products')
+            ->where('product_id', $id)
+            ->update($data);
 
         return redirect()->route('products.index')
             ->with('success', 'Produk berhasil diperbarui!');
@@ -89,9 +128,15 @@ class ProductController extends Controller
 
     public function destroy(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = DB::table('products')
+            ->where('product_id', $id)
+            ->first();
 
-        $product->delete();
+        abort_if(!$product, 404);
+
+        DB::table('products')
+            ->where('product_id', $id)
+            ->delete();
 
         return redirect()->route('products.index')
             ->with('success', 'Produk berhasil dihapus!');
